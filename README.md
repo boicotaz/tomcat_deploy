@@ -83,8 +83,8 @@ ansible tries to bring the system to the desired state
  become: true  => privillege elevation
  remote_src: no => search the file in our current host
  src: ~/tomcat_deploy/tomcat.service => location of the file in our host
- dest: /lib/systemd/system/tomcat.service => copy location in the remote host 
-  owner: root, group: root, mode: '0644' =>   specifies the ownership and permissions that the copied file will have, so it can be accessed correctly
+ dest: /lib/systemd/system/tomcat.service => copy location in the remote host
+ owner: root, group: root, mode: '0644' =>   specifies the ownership and permissions that the copied file will have, so it can be accessed correctly
 ```
   - name: start tomcat
     become: true
@@ -96,7 +96,7 @@ ansible tries to bring the system to the desired state
 ```
 Use systemd ansible module to make sure the tomcat service is in the state we need
  
-become: true  => privillege elevation 
+become: true  => privillege elevation
 state: started => make sure the service is started
 enabled: true => make sure that systemd will start this service on the boot process
 daemon_reload: yes => since we just added a new unit service file, instruct systemd to reload the daemons
@@ -159,4 +159,3 @@ of the copied file, so the tomcat can use it
 ```
 this *helper* task make sure to wait the unpacking of the hello-world.war file by
 the tomcat server
-
