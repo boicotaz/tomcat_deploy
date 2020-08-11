@@ -1,0 +1,67 @@
+---
+- hosts: tomcat_host
+  tasks:
+  - name: upgrade all packages
+    become: true
+    yum:
+      name: '*'
+      state: latest
+
+  - name: install Java jdk
+    become: true
+    yum:
+      name: java-1.8.0-openjdk
+      state: present
+ 
+  - name: install tomcat
+    become: true
+    yum:
+      name: tomcat
+      state: present
+
+  - name: install unit service file
+    become: true
+    copy:
+      src: ./tomcat.service
+      dest: /lib/systemd/system/tomcat.service
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: start tomcat
+    become: true
+    systemd:
+      name: tomcat
+      state: started
+      enabled: true
+
+  - name: wait for tomcat to start
+    wait_for: port=8080
+
+  - name: install git
+    become: true
+    yum:
+      name: git
+      state: present 
+
+  - name: clone git repo 
+    become: true
+    git:
+      repo: 'https://github.com/efsavage/hello-world-war.git'
+      dest: /tmp/repo
+
+  - name: deploy hello-world
+    become: true
+    copy:
+      remote_src: yes
+      src: /tmp/repo/dist/hello-world.war
+      dest: /var/lib/tomcat/webapps/hello-world.war
+      owner: tomcat
+      group: tomcat
+      mode: '0755'
+
+  - name: Wait for deployment to fully complete
+    become: true
+
+    wait_for:
+      path: /var/lib/tomcat/webapps/hello-world
