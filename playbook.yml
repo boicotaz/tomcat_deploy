@@ -22,7 +22,8 @@
   - name: install unit service file
     become: true
     copy:
-      src: ./tomcat.service
+      remote_src: no
+      src: ~/tomcat_deploy/tomcat.service
       dest: /lib/systemd/system/tomcat.service
       owner: root
       group: root
@@ -34,6 +35,7 @@
       name: tomcat
       state: started
       enabled: true
+      daemon_reload: yes
 
   - name: wait for tomcat to start
     wait_for: port=8080
@@ -62,6 +64,5 @@
 
   - name: Wait for deployment to fully complete
     become: true
-
     wait_for:
       path: /var/lib/tomcat/webapps/hello-world
